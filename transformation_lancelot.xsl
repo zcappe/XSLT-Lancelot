@@ -75,9 +75,14 @@
                 <xsl:variable name="person">
                     <xsl:value-of select=".//persName"/>
                 </xsl:variable>
+                
+                <xsl:variable name="notepers">
+                    <xsl:value-of select="lower-case(.//note/text())"/>
+                </xsl:variable>
+                
                 <xsl:choose>
                     <xsl:when test=".//note/text()">
-                        <xsl:value-of select="concat($person, ' (', .//note/text(), ')')"/>
+                        <xsl:value-of select="concat($person, ' (', $notepers, ')')"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="$person"/>
