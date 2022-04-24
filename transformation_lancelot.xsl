@@ -92,12 +92,11 @@
                 <xsl:variable name="idPerson">
                     <xsl:value-of select=".//@xml:id"/>
                 </xsl:variable>
+                
                 <xsl:text> : </xsl:text>
                 <xsl:for-each select="ancestor::TEI//body//persName[replace(@ref, '#', '')=$idPerson]">
-                    <xsl:apply-templates mode="reg"/>
-                    <xsl:text> (l.</xsl:text>
+                    <xsl:text> l.</xsl:text>
                     <xsl:value-of select="count(parent::l/preceding::l) + 1"/>
-                    <xsl:text>)</xsl:text>
                     <xsl:choose>
                         <xsl:when test="position()!=last()">, </xsl:when>
                         <xsl:otherwise>.</xsl:otherwise>
