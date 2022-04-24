@@ -15,19 +15,19 @@
     </xsl:variable>
     
     <xsl:variable name="accueil">
-        <xsl:value-of select="concat($file, 'accueil', '.html')"/>
+        <xsl:value-of select="concat($file, '_accueil', '.html')"/>
     </xsl:variable>
     
     <xsl:variable name="indexPersonnages">
-        <xsl:value-of select="concat($file, 'indexPersonnages', '.html')"/>
+        <xsl:value-of select="concat($file, '_indexPersonnages', '.html')"/>
     </xsl:variable>  
     
     <xsl:variable name="texteNorm">
-        <xsl:value-of select="concat($file, 'texteNorm', '.html')"/>
+        <xsl:value-of select="concat($file, '_texteNorm', '.html')"/>
     </xsl:variable>        
     
     <xsl:variable name="texteTranscrit">
-        <xsl:value-of select="concat($file, 'texteTranscrit', '.html')"/>
+        <xsl:value-of select="concat($file, '_texteTranscrit', '.html')"/>
     </xsl:variable>
     
     
@@ -46,7 +46,6 @@
     <xsl:variable name="textauthor">
         <xsl:value-of select="//titleStmt/author"/>
     </xsl:variable>
-    
     
     
     <!-- Variables et templates particulières aux différentes pages: -->
@@ -81,32 +80,6 @@
     <xsl:template match="choice" mode="orig">
         <xsl:value-of select=".//orig/text() | .//abbr/text()"/>
     </xsl:template>
-    
-    
-    
-    <xsl:variable name="imgp1">
-        <span>
-            <a href="{//pb[1]/@facs}">Numérisation de la page</a>
-        </span>
-    </xsl:variable>
-    
-    <xsl:variable name="imgp2">
-        <span>
-            <a href="{//pb[2]/@facs}">Numérisation de la page</a>
-        </span>
-    </xsl:variable>
-    
-    <xsl:variable name="imgp3">
-        <span>
-            <a href="{//pb[3]/@facs}">Numérisation de la page</a>
-        </span>
-    </xsl:variable>
-    
-    
-    
-    
-    
-    
     
     
     
@@ -212,18 +185,45 @@
                         <xsl:value-of select="$textauthor"/>
                     </h2>
                     <div>
+                        <p>Les numérisations des feuillets transcrits :</p>
                         <ul>
+                            <li><a href="{//pb[1]/@facs}">f.101v</a></li>
+                            <li><a href="{//pb[2]/@facs}">f.102r</a></li>
+                            <li><a href="{//pb[3]/@facs}">f.102v</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <ul>
+                            <!-- On crée, pour chaque élément <l> un élément <li> qui contient le texte
+                            de chaque ligne, ainsi que celui contenu dans les éléments internes à <l>
+                            comme <persName> ou <add>. 
+                            L'élément <c type="hyphen"> servait à signaler les endroits où le copiste avait
+                            inscrit un tiret en fin de ligne pour les renvois à la ligne de mots divisés par
+                            la justification du texte, on les fait donc apparaître ici avec un tiret. -->
                             <xsl:for-each select="//l">
                                 <xsl:choose>
                                     <xsl:when test="position() = 1">
                                         <xsl:element name="li">
-                                            <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" mode="orig"/>
+                                            <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" 
+                                                mode="orig"/>
+                                            <xsl:choose>
+                                                <xsl:when test=".//c[@type='hyphen']">
+                                                    <xsl:text>-</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise/>
+                                            </xsl:choose>
                                         </xsl:element>
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <xsl:element name="li">
                                             <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()"
                                                 mode="orig"/>
+                                            <xsl:choose>
+                                                <xsl:when test=".//c[@type='hyphen']">
+                                                    <xsl:text>-</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise/>
+                                            </xsl:choose>
                                         </xsl:element>
                                     </xsl:otherwise>
                                 </xsl:choose>
