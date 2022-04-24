@@ -52,7 +52,7 @@
          <publicationStmt>
             <publisher>Ecole des chartes</publisher>
             <pubPlace>Paris</pubPlace>
-            <date when-iso="2022-02">Février 2022</date>
+            <date when-iso="2022-02">février 2022</date>
          </publicationStmt>
          
          <sourceDesc>
@@ -252,7 +252,7 @@
                </person>
                <person xml:id="Guenievre">
                   <persName>La reine Guenièvre</persName>
-                  <note>Dans cet extrait, elle est nommée uniquement "la royne".</note>
+                  <note>Dans cet extrait, elle est nommée uniquement "la royne"</note>
                </person>
                <person xml:id="DamedeRohestoc">
                   <persName>La dame de Rohestoc</persName>
@@ -260,26 +260,26 @@
                </person>
                <person xml:id="Segurades">
                   <persName>Segurades</persName>
-                  <note>Chevalier.</note>
+                  <note>Chevalier</note>
                </person>
                <person xml:id="CaninsliNains">
                   <persName>Canins li Nains</persName>
-                  <note>Oncle de la cousine de la dame de Rohestoc.</note>
+                  <note>Oncle de la cousine de la dame de Rohestoc</note>
                </person>
                <person xml:id="Gauvain">
                   <persName>Gauvain</persName>
-                  <note>Chevalier et neveu du roi Arthur.</note>
+                  <note>Chevalier et neveu du roi Arthur</note>
                </person>
                <person xml:id="niece">
-                  <persName>la nièce</persName>
-                  <note>Nièce de Canins li Nains et cousine de la dame de Rohestoc.</note>
+                  <persName>La nièce</persName>
+                  <note>Nièce de Canins li Nains et cousine de la dame de Rohestoc</note>
                </person>
                <person xml:id="Hector">
                   <persName>Hector</persName>
-                  <note>Chevalier, amant de la nièce de Canins li Nains.</note>
+                  <note>Chevalier, amant de la nièce de Canins li Nains</note>
                </person>
                <person xml:id="senechal">
-                  <persName>la sénéchal</persName>
+                  <persName>Le sénéchal</persName>
                   <note/>
                </person>
             </listPerson>

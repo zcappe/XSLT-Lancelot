@@ -56,15 +56,51 @@
         <xsl:value-of select="//titleStmt/editor/name"/>
     </xsl:variable>
     
+    <xsl:variable name="eddate">
+        <xsl:value-of select="//publicationStmt/date"/>
+    </xsl:variable>
+    
     <xsl:variable name="nbf">
         <xsl:value-of select="//msItemStruct/locus"/>
     </xsl:variable>
     
-    
-    
+        
     <!-- Index: -->
-    
-    
+        
+    <xsl:template name="index">
+        <xsl:for-each select=".//listPerson/person">
+            <li>
+                <!-- Pour donner plus d'informations sur les personnages, on ajoute les
+                notes à côté de leur nom, entre parenthèses, quand il y en a -->
+                <xsl:variable name="person">
+                    <xsl:value-of select=".//persName"/>
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test=".//note/text()">
+                        <xsl:value-of select="concat($person, ' (', .//note/text(), ')')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$person"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                
+                <xsl:variable name="idPerson">
+                    <xsl:value-of select=".//@xml:id"/>
+                </xsl:variable>
+                <xsl:text> : </xsl:text>
+                <xsl:for-each select="ancestor::TEI//body//persName[replace(@ref, '#', '')=$idPerson]">
+                    <xsl:apply-templates mode="reg"/>
+                    <xsl:text> (l.</xsl:text>
+                    <xsl:value-of select="count(parent::l/preceding::l) + 1"/>
+                    <xsl:text>)</xsl:text>
+                    <xsl:choose>
+                        <xsl:when test="position()!=last()">, </xsl:when>
+                        <xsl:otherwise>.</xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </li>
+        </xsl:for-each>
+    </xsl:template>
     
     
     <!-- Transcription normalisée: -->
@@ -75,15 +111,14 @@
     
     
     <!-- Transcription fascimilaire: -->
-    
-    
-    
+            
     <xsl:template match="choice" mode="orig">
         <xsl:value-of select=".//orig/text() | .//abbr/text()"/>
     </xsl:template>
     
     
-    
+
+
     <!-- Mise en forme des pages du site -->
     
     <xsl:template match="/">
@@ -110,11 +145,11 @@
                         <xsl:value-of select="$nbf"/>
                     </h3>
                     <div>
-                        <p>Cette édition a été réalisée par <xsl:value-of select="$edauthor"/></p>
+                        <p>Cette édition a été réalisée par <xsl:value-of select="concat($edauthor, ', en ', $eddate)"/></p>
                         <p>Le texte est disponible sous deux formes:</p>
                         <ul>
-                            <li><a href="{$texteTranscrit}">édition paléographique</a></li>
-                            <li><a href="{$texteNorm}">texte normalisé</a></li>
+                            <li><a href="{$texteTranscrit}">version allographétique</a></li>
+                            <li><a href="{$texteNorm}">version normalisée</a></li>
                         </ul>
                         <p>On peut aussi consulter l'<a href="{$indexPersonnages}">index des personnages</a></p>
                     </div>
@@ -165,6 +200,7 @@
             </html>
         </xsl:result-document>
         
+        
         <!-- La page de la transcription fascimilaire -->
         
         <xsl:result-document href="{$texteTranscrit}">
@@ -193,39 +229,39 @@
                     <div>
                         
                         <xsl:element name="ol">
-                                <!-- On crée, pour chaque élément <l> un élément <li> qui contient le texte
-                                    de chaque ligne, dans sa forme originale -->
-                                <xsl:for-each select=".//l">
-                                    <xsl:choose>
-                                        <xsl:when test="position() = 1">
-                                            <xsl:element name="li">
-                                                <xsl:apply-templates mode="orig"/>
-                                                <!-- L'élément <c type="hyphen"> servait à signaler les endroits où le copiste avait
-                                                    inscrit un tiret en fin de ligne pour les renvois à la ligne de mots divisés par
-                                                    la justification du texte, on les fait donc apparaître ici avec un tiret. -->
-                                                <xsl:choose>
-                                                    <xsl:when test=".//c[@type='hyphen']">
-                                                        <xsl:text>-</xsl:text>
-                                                    </xsl:when>
-                                                    <xsl:otherwise/>
-                                                </xsl:choose>
-                                            </xsl:element>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:element name="li">
-                                                <xsl:apply-templates mode="orig"/>
-                                                <xsl:choose>
-                                                    <xsl:when test=".//c[@type='hyphen']">
-                                                        <xsl:text>-</xsl:text>
-                                                    </xsl:when>
-                                                    <xsl:otherwise/>
-                                                </xsl:choose>
-                                            </xsl:element>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:for-each>
+                            <!-- On crée, pour chaque élément <l> un élément <li> qui contient le texte
+                                de chaque ligne, dans sa forme originale -->
+                            <xsl:for-each select=".//l">
+                                <xsl:choose>
+                                    <xsl:when test="position() = 1">
+                                        <xsl:element name="li">
+                                            <xsl:apply-templates mode="orig"/>
+                                            <!-- L'élément <c type="hyphen"> servait à signaler les endroits où le copiste avait
+                                                inscrit un tiret en fin de ligne pour les renvois à la ligne de mots divisés par
+                                                la justification du texte, on les fait donc apparaître ici avec un tiret. -->
+                                            <xsl:choose>
+                                                <xsl:when test=".//c[@type='hyphen']">
+                                                    <xsl:text>-</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise/>
+                                            </xsl:choose>
+                                        </xsl:element>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:element name="li">
+                                            <xsl:apply-templates mode="orig"/>
+                                            <xsl:choose>
+                                                <xsl:when test=".//c[@type='hyphen']">
+                                                    <xsl:text>-</xsl:text>
+                                                </xsl:when>
+                                                <xsl:otherwise/>
+                                            </xsl:choose>
+                                        </xsl:element>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
                             
-                            </xsl:element>
+                        </xsl:element>
                     </div>
                     <div>
                         <p><a href="{$accueil}">Retour à la page d'accueil</a></p>
@@ -233,6 +269,7 @@
                 </body>
             </html>
         </xsl:result-document>
+        
         
         <!-- La page de l'index des personnages -->
         
@@ -252,7 +289,7 @@
                         <xsl:value-of select="$textauthor"/>
                     </h2>
                     <div>
-                        
+                        <xsl:call-template name="index"/>
                     </div>
                     <div>
                         <p><a href="{$accueil}">Retour à la page d'accueil</a></p>
@@ -262,18 +299,6 @@
         </xsl:result-document>
         
         
-        
     </xsl:template>
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
 </xsl:stylesheet>
