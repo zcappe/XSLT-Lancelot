@@ -64,13 +64,10 @@
     
     <!-- Index: -->
     
+    
+    
+    
     <!-- Transcription normalisée: -->
-    
-    <xsl:variable name="txtnorm">
-        <xsl:value-of select="//l/text()"/>
-    </xsl:variable>
-    
-    
     
     <xsl:template match="choice" mode="reg">
         <xsl:value-of select=".//reg/text() | .//expan//text()"/>
@@ -118,7 +115,8 @@
     <xsl:template match="/">
         
         <!-- La page d'accueil -->
-        
+        <!-- Elle présente les principales informations sur l'édition et permet d'accéder
+        aux différentes pages -->
         <xsl:result-document href="{$accueil}">
             <html>
                 <head>
@@ -150,6 +148,7 @@
             </html>
         </xsl:result-document>
         
+        
         <!-- La page de la transcription normalisée -->
         
         <xsl:result-document href="{$texteNorm}">
@@ -168,8 +167,24 @@
                         <xsl:value-of select="$textauthor"/>
                     </h2>
                     <div>
+                        <!-- Le texte étant en prose, il a paru intéressant de le faire apparaître dans
+                        sa version normalisée sous forme de paragraphe -->
                         <p>
-                            <xsl:apply-templates select=".//l" mode="reg"/>
+                            <xsl:for-each select="//l">
+                                <xsl:choose>
+                                    <xsl:when test="position() = 1">    
+                                        <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" 
+                                            mode="reg"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:value-of select="' '"/> <!-- cela permet d'avoir des espaces à chaque
+                                       changement de ligne et rend le texte plus lisible, mais pose le problème des
+                                       espaces entre les coupures de mots-->
+                                        <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" 
+                                            mode="reg"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
                         </p>
                     </div>
                     <div>
@@ -197,7 +212,23 @@
                         <xsl:value-of select="$textauthor"/>
                     </h2>
                     <div>
-                        
+                        <ul>
+                            <xsl:for-each select="//l">
+                                <xsl:choose>
+                                    <xsl:when test="position() = 1">
+                                        <xsl:element name="li">
+                                            <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" mode="orig"/>
+                                        </xsl:element>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:element name="li">
+                                            <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()"
+                                                mode="orig"/>
+                                        </xsl:element>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </ul>
                     </div>
                     <div>
                         <p><a href="{$accueil}">Retour à la page d'accueil</a></p>
