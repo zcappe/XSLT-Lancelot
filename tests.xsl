@@ -83,10 +83,6 @@
     </xsl:template>
     
     
-    <xsl:template match="l">
-        
-    </xsl:template>
-    
     
     <!-- Mise en forme des pages du site -->
     
@@ -146,8 +142,7 @@
                     </h2>
                     <div>
                         <!-- Le texte étant en prose, il a paru intéressant de le faire apparaître dans
-                            sa version normalisée sous la forme d'un paragraphe. -->                        
-                        
+                            sa version normalisée sous la forme d'un paragraphe. -->  
                         <xsl:for-each select=".//l">
                             <xsl:choose>
                                 <xsl:when test="position() = 1">    
@@ -197,16 +192,9 @@
                     </div>
                     <div>
                         
-                        <!-- Les lignes de texte sont regroupées dans des groupes <lg>. Les ruptures
-                            sont à chaque fois marquées par un changement de colonne, que l'on indique ici
-                            pour rendre le découpage du texte plus compréhensible: -->
-                        <xsl:for-each select="//lg">
-                            <xsl:element name="ul">
-                                <b>Nouvelle colonne</b>
+                        <xsl:element name="ol">
                                 <!-- On crée, pour chaque élément <l> un élément <li> qui contient le texte
-                                    de chaque ligne, ainsi que celui contenu dans les éléments internes à <l>
-                                    comme <persName> ou <add>. -->
-                                
+                                    de chaque ligne, dans sa forme originale -->
                                 <xsl:for-each select=".//l">
                                     <xsl:choose>
                                         <xsl:when test="position() = 1">
@@ -236,9 +224,8 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:for-each>
+                            
                             </xsl:element>
-                        </xsl:for-each>
-                        
                     </div>
                     <div>
                         <p><a href="{$accueil}">Retour à la page d'accueil</a></p>
