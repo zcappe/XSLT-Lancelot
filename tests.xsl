@@ -61,6 +61,7 @@
     </xsl:variable>
     
     
+    
     <!-- Index: -->
     
     
@@ -82,6 +83,10 @@
     </xsl:template>
     
     
+    <xsl:template match="l">
+        
+    </xsl:template>
+    
     
     <!-- Mise en forme des pages du site -->
     
@@ -89,7 +94,7 @@
         
         <!-- La page d'accueil -->
         <!-- Elle présente les principales informations sur l'édition et permet d'accéder
-        aux différentes pages -->
+            aux différentes pages -->
         <xsl:result-document href="{$accueil}">
             <html>
                 <head>
@@ -141,24 +146,22 @@
                     </h2>
                     <div>
                         <!-- Le texte étant en prose, il a paru intéressant de le faire apparaître dans
-                        sa version normalisée sous forme de paragraphe -->
-                        <p>
-                            <xsl:for-each select="//l">
-                                <xsl:choose>
-                                    <xsl:when test="position() = 1">    
-                                        <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" 
-                                            mode="reg"/>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                       <xsl:value-of select="' '"/> <!-- cela permet d'avoir des espaces à chaque
-                                       changement de ligne et rend le texte plus lisible, mais pose le problème des
-                                       espaces entre les coupures de mots-->
-                                        <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" 
-                                            mode="reg"/>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:for-each>
-                        </p>
+                            sa version normalisée sous la forme d'un paragraphe. -->                        
+                        
+                        <xsl:for-each select=".//l">
+                            <xsl:choose>
+                                <xsl:when test="position() = 1">    
+                                    <xsl:apply-templates mode="reg"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="' '"/> <!-- cela permet d'avoir des espaces à chaque
+                                        changement de ligne et rend le texte plus lisible, mais pose le problème des
+                                        espaces entre les coupures de mots-->
+                                    <xsl:apply-templates mode="reg"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:for-each>
+                        
                     </div>
                     <div>
                         <p><a href="{$accueil}">Retour à la page d'accueil</a></p>
@@ -193,42 +196,49 @@
                         </ul>
                     </div>
                     <div>
-                        <ul>
-                            <!-- On crée, pour chaque élément <l> un élément <li> qui contient le texte
-                            de chaque ligne, ainsi que celui contenu dans les éléments internes à <l>
-                            comme <persName> ou <add>. 
-                            L'élément <c type="hyphen"> servait à signaler les endroits où le copiste avait
-                            inscrit un tiret en fin de ligne pour les renvois à la ligne de mots divisés par
-                            la justification du texte, on les fait donc apparaître ici avec un tiret. -->
-                            <xsl:for-each select="//l">
-                                <xsl:choose>
-                                    <xsl:when test="position() = 1">
-                                        <xsl:element name="li">
-                                            <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()" 
-                                                mode="orig"/>
-                                            <xsl:choose>
-                                                <xsl:when test=".//c[@type='hyphen']">
-                                                    <xsl:text>-</xsl:text>
-                                                </xsl:when>
-                                                <xsl:otherwise/>
-                                            </xsl:choose>
-                                        </xsl:element>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:element name="li">
-                                            <xsl:apply-templates select="text() | add/text() | persName/text() | damage/text() | supplied/text() | g/text()"
-                                                mode="orig"/>
-                                            <xsl:choose>
-                                                <xsl:when test=".//c[@type='hyphen']">
-                                                    <xsl:text>-</xsl:text>
-                                                </xsl:when>
-                                                <xsl:otherwise/>
-                                            </xsl:choose>
-                                        </xsl:element>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:for-each>
-                        </ul>
+                        
+                        <!-- Les lignes de texte sont regroupées dans des groupes <lg>. Les ruptures
+                            sont à chaque fois marquées par un changement de colonne, que l'on indique ici
+                            pour rendre le découpage du texte plus compréhensible: -->
+                        <xsl:for-each select="//lg">
+                            <xsl:element name="ul">
+                                <b>Nouvelle colonne</b>
+                                <!-- On crée, pour chaque élément <l> un élément <li> qui contient le texte
+                                    de chaque ligne, ainsi que celui contenu dans les éléments internes à <l>
+                                    comme <persName> ou <add>. -->
+                                
+                                <xsl:for-each select=".//l">
+                                    <xsl:choose>
+                                        <xsl:when test="position() = 1">
+                                            <xsl:element name="li">
+                                                <xsl:apply-templates mode="orig"/>
+                                                <!-- L'élément <c type="hyphen"> servait à signaler les endroits où le copiste avait
+                                                    inscrit un tiret en fin de ligne pour les renvois à la ligne de mots divisés par
+                                                    la justification du texte, on les fait donc apparaître ici avec un tiret. -->
+                                                <xsl:choose>
+                                                    <xsl:when test=".//c[@type='hyphen']">
+                                                        <xsl:text>-</xsl:text>
+                                                    </xsl:when>
+                                                    <xsl:otherwise/>
+                                                </xsl:choose>
+                                            </xsl:element>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:element name="li">
+                                                <xsl:apply-templates mode="orig"/>
+                                                <xsl:choose>
+                                                    <xsl:when test=".//c[@type='hyphen']">
+                                                        <xsl:text>-</xsl:text>
+                                                    </xsl:when>
+                                                    <xsl:otherwise/>
+                                                </xsl:choose>
+                                            </xsl:element>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:for-each>
+                            </xsl:element>
+                        </xsl:for-each>
+                        
                     </div>
                     <div>
                         <p><a href="{$accueil}">Retour à la page d'accueil</a></p>
